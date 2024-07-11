@@ -8,7 +8,6 @@ import lombok.Setter;
 public class Cargo {
 
 
-
     private String description;
 
     private int weight;

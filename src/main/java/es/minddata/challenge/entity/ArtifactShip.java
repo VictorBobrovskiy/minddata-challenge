@@ -1,19 +1,17 @@
 package es.minddata.challenge.entity;
 
 import es.minddata.challenge.model.Cargo;
+import es.minddata.challenge.model.Planet;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-public class CargoVessel extends StarShip {
+public class ArtifactShip extends StarShip {
+
+    private int maxGunPower;
 
     private int maxCapacity;
 
@@ -27,5 +25,13 @@ public class CargoVessel extends StarShip {
         actualLoad = actualLoad - cargo.getWeight();
     }
 
-
+    public boolean fire(Planet planet) {
+        if (!"DeathStar".equals(super.getName())) {
+            return false;
+        } else {
+            maxGunPower = Integer.MAX_VALUE;
+            planet = null;
+            return true;
+        }
+    }
 }

@@ -1,8 +1,12 @@
 package es.minddata.challenge.entity;
 
 import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class WarShip extends StarShip {
 
     private int maxGunPower;
@@ -13,9 +17,11 @@ public class WarShip extends StarShip {
 
         int reamingShield = starShip.getShieldStrength() - gunPower;
 
-        if (starShip.getShieldStrength() < 0)
+        if (reamingShield < 0)
             return true;
-            else return false;
+        else {
+            starShip.setShieldStrength(reamingShield);
+            return false;
+        }
     }
-
 }

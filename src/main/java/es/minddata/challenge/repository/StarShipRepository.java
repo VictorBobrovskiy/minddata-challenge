@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface StarShipRepository extends JpaRepository<StarShip, Long> {
     Optional<StarShip> findByName(String name);
+
     Page<StarShip> findAllByNameContaining(String name, Pageable pageable);
 
 }

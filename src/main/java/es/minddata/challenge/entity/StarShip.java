@@ -11,6 +11,7 @@ import lombok.Setter;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
+
 public abstract class StarShip implements Landable, HyperJumpable {
 
     @Id
@@ -18,8 +19,10 @@ public abstract class StarShip implements Landable, HyperJumpable {
     private Long id;
 
     private String name;
+
     @Embedded
     private transient Position position;
+
     @ManyToOne
     private Engine engine;
 
@@ -34,7 +37,7 @@ public abstract class StarShip implements Landable, HyperJumpable {
 
     @Override
     public Position calculateDestination(StarSystem starSystem) {
-        return null;
+        return new Position();
     }
 
     @Override

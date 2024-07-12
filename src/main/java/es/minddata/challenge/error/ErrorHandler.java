@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
@@ -22,10 +23,14 @@ public class ErrorHandler {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+
     @ExceptionHandler({
-            ConstraintViolationException.class, IllegalStateException.class,
-            MethodArgumentNotValidException.class, IllegalArgumentException.class,
-            MethodArgumentTypeMismatchException.class, MissingServletRequestParameterException.class,
+            MethodArgumentNotValidException.class,
+            MethodArgumentTypeMismatchException.class,
+            ConstraintViolationException.class,
+            IllegalStateException.class,
+            IllegalArgumentException.class,
+            MissingServletRequestParameterException.class,
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidation(final Exception e) {
@@ -33,7 +38,7 @@ public class ErrorHandler {
         log.error("----- Exception " + e.getClass() + " caused BAD_REQUEST status" + getStackTrace(e));
 
         return new ErrorResponse(
-                getStackTrace(e),
+                "Invalid parameters for creating a starship",
                 e.getMessage(),
                 LocalDateTime.now().format(FORMATTER)
         );
@@ -46,7 +51,7 @@ public class ErrorHandler {
         log.error("----- Error " + e.getClass() + " caused NOT_FOUND status" + getStackTrace(e));
 
         return new ErrorResponse(
-                getStackTrace(e),
+                "Not Found",
                 e.getMessage(),
                 LocalDateTime.now().format(FORMATTER)
         );
@@ -62,7 +67,7 @@ public class ErrorHandler {
         log.error("----- Error " + e.getClass() + " caused CONFLICT status");
 
         return new ErrorResponse(
-                getStackTrace(e),
+                "Already Exists",
                 e.getMessage(),
                 LocalDateTime.now().format(FORMATTER)
         );
@@ -76,7 +81,7 @@ public class ErrorHandler {
         log.error("----- Error " + e.getClass() + " caused INTERNAL_SERVER_ERROR status" + getStackTrace(e));
 
         return new ErrorResponse(
-                getStackTrace(e),
+                "Something went really wrong",
                 e.getMessage(),
                 LocalDateTime.now().format(FORMATTER)
         );

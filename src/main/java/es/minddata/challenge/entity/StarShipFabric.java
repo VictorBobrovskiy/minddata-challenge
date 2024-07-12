@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 public class StarShipFabric implements StarShipFactory {
 
     @Override
-    public CargoVessel createCargoVessel(String name, int maxSpeed, int weight, int size, int shieldStrength, Engine engine, int maxCapacity, int actualLoad) {
+    public CargoVessel createCargoVessel(String name, int maxSpeed, int weight, int size,
+                                         int shieldStrength, Engine engine, int maxCapacity, int actualLoad) {
         CargoVessel cargoVessel = new CargoVessel();
         cargoVessel.setName(name);
         cargoVessel.setMaxSpeed(maxSpeed);
@@ -21,7 +22,8 @@ public class StarShipFabric implements StarShipFactory {
     }
 
     @Override
-    public WarShip createWarShip(String name, int maxSpeed, int weight, int size, int shieldStrength, Engine engine, int maxGunPower) {
+    public WarShip createWarShip(String name, int maxSpeed, int weight, int size,
+                                 int shieldStrength, Engine engine, int maxGunPower) {
         WarShip warShip = new WarShip();
         warShip.setName(name);
         warShip.setMaxSpeed(maxSpeed);
@@ -34,7 +36,8 @@ public class StarShipFabric implements StarShipFactory {
     }
 
     @Override
-    public ArtifactShip createArtifactShip(String name, int maxSpeed, int weight, int size, int shieldStrength, Engine engine, int maxCapacity, int actualLoad, int maxGunPower) {
+    public ArtifactShip createArtifactShip(String name, int maxSpeed, int weight, int size, int shieldStrength,
+                                           Engine engine, int maxCapacity, int actualLoad, int maxGunPower) {
         ArtifactShip artifactShip = new ArtifactShip();
         artifactShip.setName(name);
         artifactShip.setMaxSpeed(maxSpeed);

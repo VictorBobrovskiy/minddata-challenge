@@ -2,7 +2,9 @@ package es.minddata.challenge.service;
 
 import es.minddata.challenge.dto.StarShipDto;
 import es.minddata.challenge.entity.*;
+import es.minddata.challenge.error.StarShipExistsException;
 import es.minddata.challenge.error.StarShipNotFoundException;
+import es.minddata.challenge.mapper.StarShipMapper;
 import es.minddata.challenge.repository.EngineRepository;
 import es.minddata.challenge.repository.StarShipRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
-
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -26,17 +30,38 @@ public class StarShipServiceImpl implements StarShipService {
 
     private final EngineRepository engineRepository;
 
-    private final StarShipFabric starShipFabric;
 
     @Transactional
     public StarShipDto createStarShip(StarShipDto starShipDTO) {
-        StarShip starShip = createEntityFromDto(starShipDTO);
-        return convertToDto(starShipRepository.save(starShip));
+
+        validateName(starShipDTO.getName());
+
+        engineRepository.save(starShipDTO.getEngine());
+
+        StarShip starShip = StarShipMapper.createEntityFromDto(starShipDTO);
+
+        StarShipDto createdStarShip = StarShipMapper.convertToDto(starShipRepository.save(starShip));
+
+        log.debug("----- Starship with id {} created", createdStarShip.getId());
+
+        return createdStarShip;
     }
 
+    private void validateName(String name) {
+
+        Optional<StarShip> starShipOptional = starShipRepository.findByName(name);
+        if (starShipOptional.isPresent()) {
+            throw new StarShipExistsException("La nave con este nombre ya existe");
+        }
+    }
+
+
+    @Cacheable(value = "starships", key = "{#text, #sort, #page, #size}")
     @Transactional(readOnly = true)
     public Page<StarShipDto> findAllStarShips(String text, String sort, int page, int size) {
+
         Sort sortingCriteria = Sort.by("id");
+
         if ("name".equals(sort)) {
             sortingCriteria = Sort.by("name");
         }
@@ -50,14 +75,19 @@ public class StarShipServiceImpl implements StarShipService {
             starShipPage = starShipRepository.findAll(pageable);
         }
 
-        return starShipPage.map(this::convertToDto);
+        return starShipPage.map(StarShipMapper::convertToDto);
     }
 
+    @Cacheable(value = "starships", key = "#id")
     @Transactional(readOnly = true)
     public StarShipDto findStarShipById(Long id) {
-        return starShipRepository.findById(id)
-                .map(this::convertToDto)
-                .orElse(null);
+
+        StarShip starShip = starShipRepository.findById(id)
+                .orElseThrow(() -> new StarShipNotFoundException("Starship with id " + id + " not found"));
+
+        log.debug("----- Starship with id {} found", id);
+
+        return StarShipMapper.convertToDto(starShip);
     }
 
     @Transactional
@@ -68,8 +98,20 @@ public class StarShipServiceImpl implements StarShipService {
 
         StarShip createdStarShip = updateStarShipFromDto(starShip, starShipDto);
 
-        return convertToDto(starShipRepository.save(createdStarShip));
+        StarShip updatedStarShip = starShipRepository.save(createdStarShip);
+
+        log.debug("----- Starship with id {} updated", id);
+
+        return StarShipMapper.convertToDto(updatedStarShip);
     }
+
+    @Transactional
+    public boolean deleteStarShip(Long id) {
+        starShipRepository.deleteById(id);
+        return starShipRepository.existsById(id);
+    }
+
+
 
     private StarShip updateStarShipFromDto(StarShip existingShip, StarShipDto starShipDto) {
         existingShip.setName(starShipDto.getName());
@@ -96,80 +138,4 @@ public class StarShipServiceImpl implements StarShipService {
         return existingShip;
     }
 
-
-    @Transactional
-    public boolean deleteStarShip(Long id) {
-        starShipRepository.deleteById(id);
-        return starShipRepository.existsById(id);
-    }
-
-    private StarShipDto convertToDto(StarShip starShip) {
-        StarShipDto dto = new StarShipDto();
-        dto.setId(starShip.getId());
-        dto.setName(starShip.getName());
-        dto.setMaxSpeed(starShip.getMaxSpeed());
-        dto.setWeight(starShip.getWeight());
-        dto.setSize(starShip.getSize());
-        dto.setShieldStrength(starShip.getShieldStrength());
-        dto.setEngine(starShip.getEngine());
-
-        if (starShip instanceof CargoVessel) {
-            CargoVessel cv = (CargoVessel) starShip;
-            dto.setMaxCapacity(cv.getMaxCapacity());
-            dto.setActualLoad(cv.getActualLoad());
-        }
-        if (starShip instanceof WarShip) {
-            WarShip ws = (WarShip) starShip;
-            dto.setMaxGunPower(ws.getMaxGunPower());
-        }
-        if (starShip instanceof ArtifactShip) {
-            ArtifactShip as = (ArtifactShip) starShip;
-            dto.setMaxCapacity(as.getMaxCapacity());
-            dto.setActualLoad(as.getActualLoad());
-            dto.setMaxGunPower(as.getMaxGunPower());
-        }
-        return dto;
-    }
-
-    private StarShip createEntityFromDto(StarShipDto dto) {
-
-        if (dto.getMaxCapacity() != null && dto.getMaxGunPower() != null) {
-
-            ArtifactShip ship = starShipFabric.createArtifactShip(
-                    dto.getName(),
-                    dto.getMaxSpeed(),
-                    dto.getWeight(),
-                    dto.getSize(),
-                    dto.getShieldStrength(),
-                    dto.getEngine(),
-                    dto.getMaxCapacity(),
-                    dto.getActualLoad(),
-                    dto.getMaxGunPower()
-            );
-            return ship;
-        } else if (dto.getMaxCapacity() != null) {
-            CargoVessel ship = starShipFabric.createCargoVessel(
-                    dto.getName(),
-                    dto.getMaxSpeed(),
-                    dto.getWeight(),
-                    dto.getSize(),
-                    dto.getShieldStrength(),
-                    dto.getEngine(),
-                    dto.getMaxCapacity(),
-                    dto.getActualLoad()
-            );
-            return ship;
-        } else {
-            WarShip ship = starShipFabric.createWarShip(
-                    dto.getName(),
-                    dto.getMaxSpeed(),
-                    dto.getWeight(),
-                    dto.getSize(),
-                    dto.getShieldStrength(),
-                    dto.getEngine(),
-                    dto.getMaxGunPower()
-            );
-            return ship;
-        }
-    }
 }

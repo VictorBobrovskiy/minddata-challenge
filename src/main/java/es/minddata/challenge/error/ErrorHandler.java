@@ -38,9 +38,9 @@ public class ErrorHandler {
         log.error("----- Exception " + e.getClass() + " caused BAD_REQUEST status" + getStackTrace(e));
 
         return new ErrorResponse(
-                "Invalid parameters for creating a starship",
                 e.getMessage(),
-                LocalDateTime.now().format(FORMATTER)
+                LocalDateTime.now().format(FORMATTER),
+                getStackTrace(e)
         );
     }
 
@@ -51,9 +51,9 @@ public class ErrorHandler {
         log.error("----- Error " + e.getClass() + " caused NOT_FOUND status" + getStackTrace(e));
 
         return new ErrorResponse(
-                "Not Found",
                 e.getMessage(),
-                LocalDateTime.now().format(FORMATTER)
+                LocalDateTime.now().format(FORMATTER),
+                getStackTrace(e)
         );
     }
 
@@ -67,9 +67,9 @@ public class ErrorHandler {
         log.error("----- Error " + e.getClass() + " caused CONFLICT status");
 
         return new ErrorResponse(
-                "Already Exists",
                 e.getMessage(),
-                LocalDateTime.now().format(FORMATTER)
+                LocalDateTime.now().format(FORMATTER),
+                getStackTrace(e)
         );
     }
 
@@ -81,9 +81,9 @@ public class ErrorHandler {
         log.error("----- Error " + e.getClass() + " caused INTERNAL_SERVER_ERROR status" + getStackTrace(e));
 
         return new ErrorResponse(
-                "Something went really wrong",
                 e.getMessage(),
-                LocalDateTime.now().format(FORMATTER)
+                LocalDateTime.now().format(FORMATTER),
+                getStackTrace(e)
         );
     }
 

@@ -1,8 +1,5 @@
 package es.minddata.challenge.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import es.minddata.challenge.dto.StarShipDto;
 import es.minddata.challenge.entity.Engine;
 import es.minddata.challenge.entity.StarShip;
@@ -15,11 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 public class StarShipServiceImplTest {
@@ -42,7 +44,7 @@ public class StarShipServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        engine  = new Engine(1L, "Ion Drive", true, 1000);
+        engine = new Engine(1L, "Ion Drive", true, 1000);
 
         starShipDto = new StarShipDto(
                 1L,
@@ -51,7 +53,7 @@ public class StarShipServiceImplTest {
                 5,
                 10,
                 400,
-                 engine,
+                engine,
                 500,
                 100,
                 1000);

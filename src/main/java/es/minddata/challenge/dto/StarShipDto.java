@@ -29,27 +29,27 @@ public class StarShipDto implements Serializable {
     private String name;
 
     @NotNull(message = "La nave debe tener un parametro de velocidad maxima")
-    @PositiveOrZero(message = "Velocidad maxima debe ser mayor a cero")
+    @PositiveOrZero(message = "Velocidad maxima debe ser cero o mayor")
     @ApiModelProperty(notes = "Velocidad maxima de la nave")
     private int maxSpeed;
 
     @NotNull
-    @Positive(message = "Velocidad maxima debe ser mayor a cero")
+    @Positive(message = "Peso debe ser mayor a cero")
     @ApiModelProperty(notes = "Peso de la nave")
     private int weight;
 
     @NotNull
-    @Positive(message = "Velocidad maxima debe ser mayor a cero")
+    @Positive(message = "Tamano debe ser mayor a cero")
     @ApiModelProperty(notes = "Tamano de la nave")
     private int size;
 
     @NotNull
-    @PositiveOrZero(message = "Velocidad maxima debe ser mayor a cero")
-    @ApiModelProperty(notes = "Fuerza del escudo e")
+    @PositiveOrZero(message = "Fuerza del escudo debe ser cero o mayor")
+    @ApiModelProperty(notes = "Fuerza del escudo")
     private int shieldStrength;
 
     @NotNull
-    @ApiModelProperty(notes = "Nombre del motor")
+    @ApiModelProperty(notes = "El motor de la nave")
     private Engine engine;
 
     @Positive(message = "Capacidad maxima debe ser mayor a cero")

@@ -1,7 +1,10 @@
 package es.minddata.challenge.service;
 
 import es.minddata.challenge.dto.StarShipDto;
-import es.minddata.challenge.entity.*;
+import es.minddata.challenge.entity.ArtifactShip;
+import es.minddata.challenge.entity.CargoVessel;
+import es.minddata.challenge.entity.StarShip;
+import es.minddata.challenge.entity.WarShip;
 import es.minddata.challenge.error.StarShipExistsException;
 import es.minddata.challenge.error.StarShipNotFoundException;
 import es.minddata.challenge.mapper.StarShipMapper;
@@ -9,14 +12,13 @@ import es.minddata.challenge.repository.EngineRepository;
 import es.minddata.challenge.repository.StarShipRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
@@ -110,7 +112,6 @@ public class StarShipServiceImpl implements StarShipService {
         starShipRepository.deleteById(id);
         return starShipRepository.existsById(id);
     }
-
 
 
     private StarShip updateStarShipFromDto(StarShip existingShip, StarShipDto starShipDto) {

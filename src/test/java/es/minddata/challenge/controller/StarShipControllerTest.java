@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.minddata.challenge.dto.StarShipDto;
 import es.minddata.challenge.entity.Engine;
 import es.minddata.challenge.entity.StarShip;
-import es.minddata.challenge.entity.WarShip;
 import es.minddata.challenge.error.StarShipNotFoundException;
 import es.minddata.challenge.mapper.StarShipMapper;
 import es.minddata.challenge.service.StarShipServiceImpl;
@@ -27,7 +26,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc

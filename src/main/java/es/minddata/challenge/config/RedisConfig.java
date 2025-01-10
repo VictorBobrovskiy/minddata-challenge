@@ -22,8 +22,8 @@ public class RedisConfig {
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
-        config.setHostName(redisProperties.getHost());
-        config.setPort(redisProperties.getPort());
+        config.setHostName("redis");
+        config.setPort(6379);
         if (redisProperties.getPassword() != null) {
             config.setPassword(redisProperties.getPassword());
         }
